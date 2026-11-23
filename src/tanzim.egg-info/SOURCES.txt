@@ -1,5 +1,6 @@
 pyproject.toml
 src/tanzim/__init__.py
+src/tanzim/__version__.py
 src/tanzim/cli.py
 src/tanzim/detectors.py
 src/tanzim/engine.py
