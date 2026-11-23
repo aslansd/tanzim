@@ -11,13 +11,14 @@ from .schema import TelemetryPoint
 
 def generate_tehran_summer_bms(
     days: int = 14,
-    step_minutes: int = 10,
+    step_minutes: int = 5,
     inject_faults: bool = True,
     seed: int = 42,
+    start_date: datetime | None = None,
+    temp_offset_c: float = 0.0,
 ) -> list[TelemetryPoint]:
-    """Generate realistic Tehran summer commercial chiller/BMS telemetry."""
     rng = random.Random(seed)
-    start = datetime(2026, 7, 1, 0, 0, 0)
+    start = start_date or datetime(2026, 7, 1, 0, 0, 0)
     total_steps = int((days * 24 * 60) / step_minutes)
     points: list[TelemetryPoint] = []
 
@@ -26,8 +27,14 @@ def generate_tehran_summer_bms(
         day_idx = (ts - start).days
         hour_f = ts.hour + ts.minute / 60.0
 
-        # Tehran July outdoor temperature cycle (~24C at 05:00 -> ~39C at 15:30)
-        oat = 31.5 - 7.5 * math.cos(2 * math.pi * (hour_f - 4.0) / 24.0) + rng.gauss(0, 0.3)
+        synoptic_wave = 3.5 * math.sin(2 * math.pi * day_idx / max(days, 7))
+        oat = (
+            31.5
+            + temp_offset_c
+            + synoptic_wave
+            - 7.5 * math.cos(2 * math.pi * (hour_f - 4.0) / 24.0)
+            + rng.gauss(0, 0.3)
+        )
 
         occupied = (ts.weekday() != 4) and (8 <= ts.hour < 17)
         base_kw = 22.0 + rng.gauss(0, 0.8)
@@ -42,32 +49,20 @@ def generate_tehran_summer_bms(
         cool_v = min(100.0, max(0.0, (oat - 18.0) * 4.0)) if occupied else 0.0
 
         if inject_faults:
-            # 1. Simultaneous heat/cool on Days 3-4 (09:00-15:00)
             if day_idx in (3, 4) and 9 <= ts.hour < 15:
                 heat_v = 45.0
                 cool_v = 82.0
                 power_kw += 24.0
-
-            # 2. Frozen supply-air temperature sensor on Day 5 (08:00-14:00)
             if day_idx == 5 and 8 <= ts.hour < 14:
                 sat = 13.40
-
-            # 3. Persistent +38 kW regime shift + phantom night baseload from Day 7 onward
             if day_idx >= 7:
                 power_kw += 38.0
                 if 0 <= ts.hour < 5:
-                    power_kw += 36.0  # Chiller/AHU left in manual hand mode overnight
-
-            # 4. Low Delta-T syndrome on Days 9-12
+                    power_kw += 36.0
             if day_idx in (9, 10, 11, 12) and occupied:
                 chwr = chws + 1.6 + rng.gauss(0, 0.08)
-
-            # 5. Severe summer peak overload (14:00-18:00) from Day 8 onward
             if day_idx >= 8 and 14 <= ts.hour < 18:
                 power_kw += 55.0
-
-            # 6. Rapid compressor short-cycling on Day 12 (10:00-11:00) -> 6 cycles/hr at 10-min step?
-            # Use 10-min step: alternating ON/OFF every sample gives 3 starts; let's inject on 5-min or flag >=3
             if day_idx == 12 and 10 <= ts.hour < 12:
                 power_kw = 155.0 if (i % 2 == 0) else 25.0
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from pathlib import Path
 
+from .__version__ import __version__
 from .detectors import (
     detect_chiller_low_delta_t,
     detect_peak_tariff_exposure,
@@ -13,11 +14,9 @@ from .detectors import (
     detect_simultaneous_heat_cool,
     infer_timestep_hours,
 )
-from .io import load_telemetry, sha256_dict, sha256_file
-from .schema import AuditConfig, AuditReport, Severity, TelemetryPoint
+from .io import load_telemetry_with_info, sha256_dict, sha256_file
+from .schema import AdapterInfo, AuditConfig, AuditReport, Severity, TelemetryPoint
 from .tariffs import IranTariffProfile
-
-__version__ = "0.1.0"
 
 _SEVERITY_ORDER = {Severity.CRITICAL: 0, Severity.WARNING: 1, Severity.INFO: 2}
 
@@ -28,6 +27,7 @@ def audit_records(
     tariff: IranTariffProfile | None = None,
     source_path: str = "<in-memory>",
     source_sha256: str = "",
+    adapter_info: AdapterInfo | None = None,
 ) -> AuditReport:
     cfg = config or AuditConfig()
     tar = tariff or IranTariffProfile()
@@ -62,6 +62,7 @@ def audit_records(
         total_estimated_waste_kwh=total_waste_kwh,
         total_estimated_cost_irr=total_cost_irr,
         findings=findings,
+        adapter_info=adapter_info,
     )
 
 
@@ -69,13 +70,15 @@ def audit_file(
     path: str | Path,
     config: AuditConfig | None = None,
     tariff: IranTariffProfile | None = None,
+    adapter: str = "auto",
 ) -> AuditReport:
     p = Path(path)
-    points = load_telemetry(p)
+    points, info = load_telemetry_with_info(p, adapter=adapter)
     return audit_records(
         points=points,
         config=config,
         tariff=tariff,
         source_path=str(p),
         source_sha256=sha256_file(p),
+        adapter_info=info,
     )

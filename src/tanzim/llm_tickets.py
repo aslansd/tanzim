@@ -36,9 +36,8 @@ def generate_work_order(
     lang: str = "fa",
     model: str = "gemma3:12b",
     ollama_url: str = "http://localhost:11434/api/generate",
-    timeout_sec: int = 45,
+    timeout_sec: int = 60,
 ) -> str:
-    """Turn deterministic audit findings into a technician work order via local Ollama."""
     if not report.findings:
         return "هیچ خطای پنهان انرژی شناسایی نشد." if lang == "fa" else "No silent energy faults detected."
 

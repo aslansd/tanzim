@@ -278,7 +278,6 @@ def detect_chiller_low_delta_t(
 
 
 def _weather_adjusted_residuals(points: list[TelemetryPoint]) -> list[float]:
-    """Subtract linear cooling/heating degree dependence on outdoor temperature."""
     paired = [(i, p.outdoor_temp_c, p.power_kw) for i, p in enumerate(points) if p.outdoor_temp_c is not None]
     if len(paired) < len(points) * 0.8 or len(paired) < 10:
         avg_p = mean(p.power_kw for p in points)
@@ -386,7 +385,6 @@ def detect_peak_tariff_exposure(
     occ_peak = [p for p in peak_all if _is_occupied(p, cfg)]
     occ_mid = [p for p in mid_all if _is_occupied(p, cfg)]
 
-    # Compare occupied peak vs occupied mid-peak when occupied schedules overlap
     use_occ = len(occ_peak) >= 4 and len(occ_mid) >= 4
     peak_ref = occ_peak if use_occ else peak_all
     mid_ref = occ_mid if use_occ else mid_all
@@ -452,7 +450,6 @@ def detect_short_cycling(
     dt_h: float,
     cfg: AuditConfig,
 ) -> list[Finding]:
-    # Short-cycling detection requires sub-20-minute telemetry
     if dt_h > 0.34 or len(points) < 12:
         return []
 

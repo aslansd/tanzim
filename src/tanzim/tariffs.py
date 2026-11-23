@@ -6,8 +6,8 @@ from datetime import datetime
 
 @dataclass(frozen=True)
 class TariffWindow:
-    peak_hours: tuple[int, int]      # [start, end)
-    off_peak_hours: tuple[int, int]  # [start, end)
+    peak_hours: tuple[int, int]
+    off_peak_hours: tuple[int, int]
 
 
 @dataclass(frozen=True)
