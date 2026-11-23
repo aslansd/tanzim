@@ -1,0 +1,17 @@
+pyproject.toml
+src/tanzim/__init__.py
+src/tanzim/cli.py
+src/tanzim/detectors.py
+src/tanzim/engine.py
+src/tanzim/io.py
+src/tanzim/llm_tickets.py
+src/tanzim/schema.py
+src/tanzim/synthetic.py
+src/tanzim/tariffs.py
+src/tanzim.egg-info/PKG-INFO
+src/tanzim.egg-info/SOURCES.txt
+src/tanzim.egg-info/dependency_links.txt
+src/tanzim.egg-info/entry_points.txt
+src/tanzim.egg-info/requires.txt
+src/tanzim.egg-info/top_level.txt
+tests/test_tanzim.py

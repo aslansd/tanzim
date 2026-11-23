@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tanzim"
+version = "0.1.0"
+description = "Offline-first silent-fault and energy-imbalance auditor for building BMS and industrial SCADA logs."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Aslan Satary Dizaji", email = "aslansatary@gmail.com" }]
+keywords = ["bms", "scada", "hvac", "energy-audit", "fault-detection", "change-point"]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[project.scripts]
+tanzim = "tanzim.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

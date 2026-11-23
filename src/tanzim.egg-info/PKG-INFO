@@ -1,0 +1,12 @@
+Metadata-Version: 2.4
+Name: tanzim
+Version: 0.1.0
+Summary: Offline-first silent-fault and energy-imbalance auditor for building BMS and industrial SCADA logs.
+Author-email: Aslan Satary Dizaji <aslansatary@gmail.com>
+License: MIT
+Keywords: bms,scada,hvac,energy-audit,fault-detection,change-point
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+Requires-Dist: ruff>=0.6; extra == "dev"
