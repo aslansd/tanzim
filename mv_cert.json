@@ -1,0 +1,37 @@
+{
+  "tool_version": "0.2.0",
+  "compared_at_utc": "2026-11-24T08:53:31.359320+00:00",
+  "mode": "telemetry_mv",
+  "verdict": "verified_savings",
+  "before_source": "tehran_before.csv",
+  "after_source": "tehran_after.csv",
+  "before_sha256": "eeef9c403a73babba119ba71284f223a8670c36a852d080a6dd6ca08dfe0301d",
+  "after_sha256": "a68bd2da175053eef74ad5c3c2f0adabd1ce952db8559b4730d6f07335cdab04",
+  "config_match": true,
+  "weather_normalized": false,
+  "normalization_method": "daily_mean_nonphysical_slope",
+  "baseline_r2": 0.0,
+  "before_days": 14,
+  "after_days": 14,
+  "counterfactual_after_kwh": 27285.59,
+  "actual_after_kwh": 18140.1,
+  "raw_savings_kwh": 9145.49,
+  "verified_savings_kwh": 9145.49,
+  "verified_savings_pct": 33.52,
+  "verified_cost_savings_irr": 153869579.0,
+  "peak_reduction_kw": 43.41,
+  "resolved_findings": [
+    "CHILLER_LOW_DELTA_T",
+    "PEAK_TARIFF_EXPOSURE",
+    "PHANTOM_BASELOAD",
+    "REGIME_CHANGE_POINT",
+    "SENSOR_FLATLINE",
+    "SHORT_CYCLING",
+    "SIMULTANEOUS_HEAT_COOL"
+  ],
+  "persisting_findings": [],
+  "new_findings": [],
+  "notes": [
+    "Baseline degree-day slope was negative (likely confounded by a mid-baseline regime shift); refused non-physical weather extrapolation and fell back to daily mean."
+  ]
+}

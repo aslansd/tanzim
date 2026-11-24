@@ -1,0 +1,148 @@
+{
+  "tool_version": "0.2.0",
+  "audited_at_utc": "2026-11-24T08:53:08.935408+00:00",
+  "source_path": "tehran_before.csv",
+  "source_sha256": "eeef9c403a73babba119ba71284f223a8670c36a852d080a6dd6ca08dfe0301d",
+  "config_sha256": "afa474439f43e24a7c8f31b1db862cee88c30a4df2a4a1ee8986da4e1be5a280",
+  "adapter_info": {
+    "adapter": "generic_csv",
+    "delimiter": ",",
+    "skipped_preamble_lines": 0,
+    "power_unit_scale": 1.0,
+    "resolved_columns": {
+      "timestamp": "timestamp",
+      "power_kw": "power_kw",
+      "outdoor_temp_c": "outdoor_temp_c",
+      "supply_air_temp_c": "supply_air_temp_c",
+      "chilled_water_supply_c": "chilled_water_supply_c",
+      "chilled_water_return_c": "chilled_water_return_c",
+      "heating_valve_pct": "heating_valve_pct",
+      "cooling_valve_pct": "cooling_valve_pct"
+    }
+  },
+  "record_count": 4032,
+  "timestep_hours": 0.0833,
+  "total_energy_kwh": 27285.59,
+  "peak_energy_kwh": 7805.85,
+  "total_estimated_waste_kwh": 12947.56,
+  "total_estimated_cost_irr": 213991203.0,
+  "findings": [
+    {
+      "code": "REGIME_CHANGE_POINT",
+      "title": "Upward baseline load shift (weather-adjusted change-point)",
+      "severity": "critical",
+      "summary": "Detected a persistent +56.8 kW weather-adjusted load step-up starting on 2026-07-08 (z=7.16).",
+      "estimated_waste_kwh": 9537.94,
+      "estimated_cost_irr": 131146693.0,
+      "start_time": "2026-07-08T00:00:00",
+      "end_time": "2026-07-14T23:55:00",
+      "evidence": {
+        "changepoint_date": "2026-07-08",
+        "step_increase_kw": 56.77,
+        "z_score": 7.16,
+        "post_shift_days": 7
+      }
+    },
+    {
+      "code": "PEAK_TARIFF_EXPOSURE",
+      "title": "Iran peak-window overload & demand-cap exposure",
+      "severity": "critical",
+      "summary": "Facility breached contracted demand cap (180 kW) in 180 peak intervals (max 228.2 kW) and peak-window average (180.3 kW) is 1.34x mid-peak average (134.6 kW).",
+      "estimated_waste_kwh": 0.0,
+      "estimated_cost_irr": 39496250.0,
+      "start_time": "2026-07-01T14:00:00",
+      "end_time": "2026-07-14T17:55:00",
+      "evidence": {
+        "avg_peak_kw": 180.27,
+        "max_peak_kw": 228.16,
+        "avg_mid_peak_kw": 134.56,
+        "peak_to_mid_ratio": 1.34,
+        "occupied_comparison": true,
+        "contracted_demand_kw": 180.0,
+        "cap_breach_intervals": 180,
+        "shiftable_peak_kwh": 1645.68
+      }
+    },
+    {
+      "code": "PHANTOM_BASELOAD",
+      "title": "Excessive unoccupied night baseload (schedule drift)",
+      "severity": "critical",
+      "summary": "Median night load (96.0 kW) across 7/14 nights is 66% of daytime occupied median (144.9 kW), exceeding the 45% threshold.",
+      "estimated_waste_kwh": 2091.64,
+      "estimated_cost_irr": 20076250.0,
+      "start_time": "2026-07-08T00:00:00",
+      "end_time": "2026-07-14T04:55:00",
+      "evidence": {
+        "affected_nights": 7,
+        "total_nights": 14,
+        "median_occupied_kw": 144.88,
+        "median_night_kw": 95.98,
+        "night_to_day_ratio": 0.662,
+        "target_standby_kw": 36.22
+      }
+    },
+    {
+      "code": "SIMULTANEOUS_HEAT_COOL",
+      "title": "Simultaneous heating and cooling (valve fighting)",
+      "severity": "critical",
+      "summary": "Heating and cooling valves were both open (>=15%) for 12.0 hours across 144 intervals.",
+      "estimated_waste_kwh": 666.91,
+      "estimated_cost_irr": 10193323.0,
+      "start_time": "2026-07-04T09:00:00",
+      "end_time": "2026-07-05T14:55:00",
+      "evidence": {
+        "overlap_hours": 12.0,
+        "max_heating_valve_pct": 45.0,
+        "max_cooling_valve_pct": 82.0
+      }
+    },
+    {
+      "code": "CHILLER_LOW_DELTA_T",
+      "title": "Chiller Low-Delta-T syndrome (over-pumping / coil fouling)",
+      "severity": "warning",
+      "summary": "Chilled-water Delta-T fell below 2.5 C during 25.0% of active cooling hours (mean low Delta-T = 1.61 C).",
+      "estimated_waste_kwh": 651.07,
+      "estimated_cost_irr": 13078687.0,
+      "start_time": "2026-07-11T08:00:00",
+      "end_time": "2026-07-13T16:55:00",
+      "evidence": {
+        "affected_fraction": 0.25,
+        "mean_low_delta_t_c": 1.61,
+        "design_reference_delta_t_c": 5.5,
+        "affected_hours": 27.0
+      }
+    },
+    {
+      "code": "SENSOR_FLATLINE",
+      "title": "Frozen sensor / flatlined telemetry on 'supply_air_temp_c'",
+      "severity": "warning",
+      "summary": "Channel 'supply_air_temp_c' stayed locked at 13.40 for 6.0 hours while plant load was active, risking blind PID control.",
+      "estimated_waste_kwh": 0.0,
+      "estimated_cost_irr": 0.0,
+      "start_time": "2026-07-06T08:00:00",
+      "end_time": "2026-07-06T13:55:00",
+      "evidence": {
+        "channel": "supply_air_temp_c",
+        "frozen_value": 13.4,
+        "duration_hours": 6.0,
+        "sample_count": 72
+      }
+    },
+    {
+      "code": "SHORT_CYCLING",
+      "title": "Rapid compressor / equipment short-cycling",
+      "severity": "warning",
+      "summary": "Detected 2 hour(s) with >=4 ON/OFF swings/hour (worst: 5 starts, 130.0 kW swing at 2026-07-13 10:00).",
+      "estimated_waste_kwh": 0.0,
+      "estimated_cost_irr": 0.0,
+      "start_time": null,
+      "end_time": null,
+      "evidence": {
+        "affected_hours": 2,
+        "max_starts_per_hour": 5,
+        "worst_swing_kw": 130.0,
+        "worst_hour": "2026-07-13T10:00"
+      }
+    }
+  ]
+}
